@@ -3,7 +3,7 @@ name: Crawler
 on:
   schedule:
     # UTC 기준으로 매시 정각에 실행 (KST는 UTC+9)
-    - cron: '5 * * * *'
+    - cron: '12 * * * *'
   workflow_dispatch: # GitHub 페이지에서 수동으로 실행할 수 있는 버튼 추가
 
 jobs:
