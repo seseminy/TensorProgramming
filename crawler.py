@@ -20,28 +20,31 @@ def run(playwright):
     page.wait_for_load_state("networkidle")
 
     # 2. 로그인 페이지인지 확인 후 로그인 수행
+    try:
+        # 로그인 입력창(userId) 또는 첫 번째 열람실 좌석 정보(id="61") 둘 중 하나가 보일 때까지 대기
+        page.wait_for_selector("input[name='userId'], xpath=//*[@id='61']/a/div/span[2]", timeout=15000)
+    except Exception as e:
+        print("경고: 15초 내에 로그인 창도, 좌석 데이터도 나타나지 않았습니다. 네트워크 지연 가능성.")
+
+    # 3. 로그인 처리 (입력창이 나타난 경우)
     if "login" in page.url.lower() or "oauth" in page.url.lower():
         print(f"로그인 페이지 진입 확인 ({page.url}). 로그인을 시도합니다.")
         
         try:
-            # [수정됨] Angular 프레임워크가 렌더링될 때까지 대기
-            page.wait_for_selector("input[name='userId']", state="visible", timeout=10000)
-            
-            # [수정됨] 동적 ID(mat-input) 대신 변하지 않는 name 속성 사용
             page.locator("input[name='userId']").fill(USER_ID)
             page.locator("input[name='password']").fill(USER_PW)
             
-            # [수정됨] 제공해주신 XPath 구조(.../ik-login/form/div/button/...)를 바탕으로 가장 안전한 CSS 선택자 사용
-            page.locator("ik-login form button").first.click()
+            # 클릭 후 네트워크 요청 처리를 위해 약간의 대기
+            with page.expect_navigation(timeout=20000):
+                 page.locator("ik-login form button").first.click()
             
-            print("로그인 버튼 클릭 완료, 페이지 이동 대기 중...")
-            
-            # 로그인 후 메인 열람실 페이지로 넘어갈 때까지 대기
-            page.wait_for_url("**/reading-rooms-status**", timeout=15000)
-            print("로그인 성공 및 열람실 페이지 진입 완료.")
+            print("로그인 버튼 클릭 완료, 페이지 이동 성공.")
             
         except Exception as e:
             print(f"로그인 과정 중 에러 발생: {e}")
+            
+    else:
+        print(f"로그인 과정 생략 (현재 URL: {page.url})")
     
     # 3. 데이터 로딩 대기
     page.wait_for_load_state("networkidle")
