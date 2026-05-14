@@ -22,7 +22,7 @@ def run(playwright):
     # 2. 로그인 페이지인지 확인 후 로그인 수행
     try:
         # 로그인 입력창(userId) 또는 첫 번째 열람실 좌석 정보(id="61") 둘 중 하나가 보일 때까지 대기
-        page.wait_for_selector("input[name='userId'], xpath=//*[@id='61']/a/div/span[2]", timeout=15000)
+        page.wait_for_selector("input[name='userId'], xpath=//*[@id='61']/a/div/span[2]", timeout=30000)
     except Exception as e:
         print("경고: 15초 내에 로그인 창도, 좌석 데이터도 나타나지 않았습니다. 네트워크 지연 가능성.")
 
