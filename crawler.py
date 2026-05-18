@@ -98,7 +98,7 @@ def run(playwright):
             f.write(page.content())
 
     kst = pytz.timezone('Asia/Seoul')
-    now = datetime.now(kst).strftime('%Y-%m-%d %H:%M:%S')
+    now = datetime.now(kst).strftime('%Y-%m-%d %H')
 
     file_path = 'seat_data.csv'
     file_exists = os.path.isfile(file_path)
@@ -106,7 +106,7 @@ def run(playwright):
     with open(file_path, mode='a', newline='', encoding='utf-8-sig') as f:
         writer = csv.writer(f)
         if not file_exists:
-            writer.writerow(['Time', 'Room 61', 'Room 63', 'Room 131', 'Room 132'])
+            writer.writerow(['시간', '제1열람실', '제2열람실', '집중열람실', '노상일HOLMZ'])
         writer.writerow([now] + data)
         
     print(f"[{now}] 최종 크롤링 결과: {data}")
